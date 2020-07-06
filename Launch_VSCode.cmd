@@ -30,13 +30,13 @@ if not exist "%PDEVTOOLS%\VSCode_Program_File" (
     @REM echo Portable VSCode has not been installed, execute __PowerShell.cmd and run `install vscode` to install it 
 
 ) else (
-	start Code --locale=zh-tw &exit
+	Code.cmd --locale=zh-tw
 )
 
 if "%YINSTALL%" == "y" (
 	set YINSTALL=
 	start /wait "Windows PowerShell" powershell -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); pdev; install vscode"
 	sleep 1 >nul
-	start Code --locale=zh-tw &exit
+	Code.cmd --locale=zh-tw
 )
 
