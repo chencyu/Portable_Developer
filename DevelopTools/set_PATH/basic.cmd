@@ -101,7 +101,7 @@ set "PDEV_PATH=%PDEVTOOLS%\extra\Junction;%PDEV_PATH%"
 
 @REM set VSCode to path
 
-set "PDEV_PATH=%PDEVTOOLS%\VSCode_Program_File\bin;%PDEV_PATH%"
+@REM set "PDEV_PATH=%PDEVTOOLS%\VSCode_Program_File\bin;%PDEV_PATH%" 
 
 @REM set PowerShell 7.0.0 to path
 
