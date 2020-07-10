@@ -11,7 +11,7 @@ if defined PATH_GRAPHVIZ_STAT ( exit /b )
 
 @REM set Graphiz to path 
 
-set "PDEV_PATH=C:\PDev_tmplink\DevelopTools\Graphviz2.38\bin;%PDEV_PATH%"
+set "PDEV_PATH=C:\PDEVHOME\DevelopTools\Graphviz\bin;%PDEV_PATH%"
 
 @REM 表明已經設置過變數
 
