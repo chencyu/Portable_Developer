@@ -1,63 +1,126 @@
 ﻿[CmdletBinding()]
 param (
-    [Parameter(Position=0)]
-    [switch]
-    $UpdateNow
+    [Parameter(ParameterSetName = "AddHost")] [switch] $AddHost,
+    [Parameter(ParameterSetName = "Update")] [switch] $Update,
+    [Parameter(Position = 0, ParameterSetName = "Update")] [string] $ServerName
 )
 
+function ConvertTo-UTF8NoBom
+{
+    process
+    {
+        $Script:Content = Get-Content -Path "$_" -Raw
+        $Script:Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
+        [System.IO.File]::WriteAllLines("$_", $Script:Content, $Script:Utf8NoBomEncoding)
+    }
+}
+
+
+
+$SSH_Config = "$($HOME)/.ssh/config".Replace("\","/")
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 
-$Script:updateip=$args[0]
-
-if (-Not $UpdateNow)
+if ($AddHost)
 {
-    $Script:CIP_ID              = Read-Host -Prompt "請提供存放Server當前IP的Google雲端檔案的ID"
-    $Script:MyUserName          = Read-Host -Prompt "請提供登入伺服器時用的使用者名稱"
-    $Script:ServerName          = Read-Host -Prompt "請提供伺服器名稱(自己取名)，不能有空格"
-    $Script:ServerPort          = Read-Host -Prompt "請提供伺服器在SSH服務提供的端口"
-    $Script:IdentityFile_path   = Read-Host -Prompt "請自行取得私鑰後，提供私鑰存放路徑，無私鑰請直接 Enter忽略"
-    $Script:IdentityFile_path   = "$Script:IdentityFile_path".Replace("\","/")
+    $CIP_ID = Read-Host -Prompt "請提供存放Server當前IP的Google雲端檔案的ID"
+    $MyUserName = Read-Host -Prompt "請提供登入伺服器時用的使用者名稱"
+    $ServerName = Read-Host -Prompt "請提供伺服器名稱(自己取名)，不能有空格"
+    $ServerPort = Read-Host -Prompt "請提供伺服器在SSH服務提供的端口"
+    $IdentityFile_path = Read-Host -Prompt "請自行取得私鑰後，提供私鑰存放路徑，無私鑰請直接 Enter忽略"
+    $IdentityFile_path = "$IdentityFile_path".Replace("\", "/")
 
-    $Script:ServerSettingFile   = "$($HOME)/.ssh/Dynamic_IP_Server_setting/$($Script:ServerName)"
-    if(-Not (Test-Path -Path $Script:ServerSettingFile)) { New-Item -ItemType File -Force -Path $Script:ServerSettingFile }
+    $ServerSettingFile = "$($HOME)/.ssh/Dynamic_IP_Server_setting/$($ServerName)"
+    if (-Not (Test-Path -Path $ServerSettingFile)) { New-Item -ItemType File -Force -Path $ServerSettingFile }
 
-    $Script:ServerSettingTable  =`
+    $ServerSettingTable = `
     @{
-        IPID = "$($Script:CIP_ID)";
-        User = "$($Script:MyUserName)";
-        Name = "$($Script:ServerName)";
-        Port = "$($Script:ServerPort)";
-        Iden = "$($Script:IdentityFile_path)"
+        IPID = "$($CIP_ID)";
+        User = "$($MyUserName)";
+        Name = "$($ServerName)";
+        Port = "$($ServerPort)";
+        Iden = "$($IdentityFile_path)"
     }
-    $Script:ServerSettingTable | ConvertTo-Json > $Script:ServerSettingFile
-    $Script:ServerSettingFile | ConvertTo-UTF8NoBom
+    $ServerSettingTable | ConvertTo-Json > $ServerSettingFile
+    $ServerSettingFile | ConvertTo-UTF8NoBom
+}
+elseif ($Update)
+{
+    # Update the Dynamic IP of Host in $(HOME)/.ssh/config now
+    $ServerSettingFile = "$($HOME)/.ssh/Dynamic_IP_Server_setting/$($ServerName)"
+    $ServerSettingJson = (Get-Content -Path "$($ServerSettingFile)") | ConvertFrom-Json
+
+
+    $CIP_ID = [string]($ServerSettingJson.IPID)
+
+    $MyUserName = [string]($ServerSettingJson.User)
+    $ServerName = [string]($ServerSettingJson.Name)
+    $progressPreference = 'silentlyContinue' # 避免Invoke-Webrequest顯示進度干擾畫面
+    $ServerAddress = ([string](Invoke-Webrequest -Uri "https://drive.google.com/uc?export=download&id=$($CIP_ID)")).Replace("`n", "").Replace("`r", "")
+    $ServerPort = [string]($ServerSettingJson.Port)
+    $IdentityFile_path = [string]($ServerSettingJson.Iden)
+
+    # region Detect if Host exist in config file
+    if (Test-Path -Path "$($SSH_Config)")
+    {
+        $SSH_Config_Content = Get-Content -Path "$($SSH_Config)"
+        $HostNameLine = 1
+        foreach ($line in $SSH_Config_Content)
+        {
+            if ($line -like "Host $($ServerName)")
+            {
+                $HostConfigExist = $true
+                $SSH_Config_Content[$HostNameLine] = "    HostName $($ServerAddress)"
+                Set-Content -Path "$($SSH_Config)" -Value $SSH_Config_Content -Encoding ASCII
+                break
+            }
+            $HostNameLine++
+        }
+    }
+
+    if (-Not ($HostConfigExist))
+    {
+        $Host_Config_Content = `
+        @(
+            ""
+            "Host $($ServerName)"
+            "    HostName $($ServerAddress)"
+            "    StrictHostKeyChecking no"
+            "    IdentityFile $($IdentityFile_path)"
+            "    User $($MyUserName)"
+            "    Port $($ServerPort)"
+            "    ForwardAgent yes"
+            "    CheckHostIP no"
+        ) -join "`r`n"
+
+        Add-Content -Path "$($SSH_Config)" -Value $Host_Config_Content -Encoding ASCII
+    }
 }
 
-$Script:ServerSettingJson = (Get-Content -Path "$($Script:ServerSettingFile)") | ConvertFrom-Json
-$Script:Config_path = "$($HOME)/.ssh/config"
-
-
-$Script:CIP_ID = [string]($Script:ServerSettingJson.IPID)
-
-$Script:MyUserName = [string]($Script:ServerSettingJson.User)
-$Script:ServerName = [string]($Script:ServerSettingJson.Name)
-$progressPreference = 'silentlyContinue' # 避免Invoke-Webrequest顯示進度干擾畫面
-$Script:ServerAddress = ([string](Invoke-Webrequest -Uri "https://drive.google.com/uc?export=download&id=$($Script:CIP_ID)")).Replace("`n","").Replace("`r","")
-$Script:ServerPort = [string]($Script:ServerSettingJson.Port)
-$Script:IdentityFile_path = [string]($Script:ServerSettingJson.Iden)
-
-$Script:Config_content = `
-@(
-    "# Read more about SSH config files: https://linux.die.net/man/5/ssh_config"
-    "Host $($Script:ServerName)"
-    "    HostName $($Script:ServerAddress)"
-    "    StrictHostKeyChecking no"
-    "    UserKnownHostsFile no"
-    "    IdentityFile $($Script:IdentityFile_path)"
-    "    User $($Script:MyUserName)"
-    "    Port $($Script:ServerPort)"
-    "    ForwardAgent yes"
-) -join "`r`n"
-
-Set-Content -Path "$($Script:Config_path)" -Value $Script:Config_content -Encoding ASCII
+# PDev專用
+if (Test-Path -Path "Env:PDEVTOOLS")
+{
+    $VSCodeSettingFile = "$Env:APPDATA/Code/User/settings.json"
+    if (Test-Path -Path $VSCodeSettingFile)
+    {
+        $VSCodeSetting_Table = (Get-Content -Path $VSCodeSettingFile | ConvertFrom-Json)
+        if(Get-Member -InputObject $VSCodeSetting_Table -Name "remote.SSH.configFile")
+        {
+            if($VSCodeSetting_Table.'remote.SSH.configFile' -ne "$SSH_Config")
+            {
+                $Dirty = $true
+                $VSCodeSetting_Table.'remote.SSH.configFile' = "$SSH_Config"
+            }
+        }
+        else
+        {
+            $Dirty = $true
+            $VSCodeSetting_Table | Add-Member -NotePropertyName "remote.SSH.configFile" -NotePropertyValue "$SSH_Config"
+        }
+        if ($Dirty)
+        {
+            $VSCodeSetting_Table | ConvertTo-Json > $VSCodeSettingFile
+            $VSCodeSettingFile | ConvertTo-UTF8NoBom
+        }
+    }
+}

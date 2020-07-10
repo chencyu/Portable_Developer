@@ -104,8 +104,11 @@ CopyTo.cmd到隨身碟中即可運作，或者存放到硬碟中做為綠色版�
  1. 增加UTF8NoBom.psm1模組，內部提供將文本轉換成UTF8-No-Bom的格式
  2. 增加對浮動IP的SSH Server的支持
   - 需自行在Server上設定自動上傳目前IP到Google雲端硬碟的服務
-  - 啟動`__PowerShell.cmd`後執行`dipssh來設定`
- 3. etc
+  - 啟動`__PowerShell.cmd`後執行`dipssh -AddHost`來設定新Host
+  - 啟動`__PowerShell.cmd`後執行`dipssh -Update <Host>`來更新Host的IP
+ 3. VSCode的環境變數PATH改為`C:/PDEVHOME/DevelopTools/VSCode_Program_File/bin`而非`C:/PDEVHOME/DevelopTools/VSCode_Program_File/`，使`code`指令更符合原生VSCode的用法
+ 4. 修復SSH Config所設定的Host無法連線的問題，必須要在VSCode設定中手動指定config路徑，不能用預設的變數($HOME/.ssh)引導
+ 5. 修復`Launch_VSCode.cmd`啟動VSCode以後不會自己關閉CMD視窗的問題
 
 ### _**注意**_
 
