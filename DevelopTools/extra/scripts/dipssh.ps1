@@ -17,7 +17,7 @@ function ConvertTo-UTF8NoBom
 
 
 
-$SSH_Config = "$($HOME)/.ssh/config".Replace("\","/")
+$SSH_Config = "$($HOME)/.ssh/config".Replace("\", "/")
 
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
 
@@ -60,7 +60,7 @@ elseif ($Update)
     $ServerPort = [string]($ServerSettingJson.Port)
     $IdentityFile_path = [string]($ServerSettingJson.Iden)
 
-    # region Detect if Host exist in config file
+    #region Detect if Host exist in config file
     if (Test-Path -Path "$($SSH_Config)")
     {
         $SSH_Config_Content = Get-Content -Path "$($SSH_Config)"
@@ -77,7 +77,9 @@ elseif ($Update)
             $HostNameLine++
         }
     }
+    #endregion
 
+    #region Add the Host setting into Config file
     if (-Not ($HostConfigExist))
     {
         $Host_Config_Content = `
@@ -95,6 +97,7 @@ elseif ($Update)
 
         Add-Content -Path "$($SSH_Config)" -Value $Host_Config_Content -Encoding ASCII
     }
+    #endregion
 }
 
 # PDev專用
@@ -104,9 +107,9 @@ if (Test-Path -Path "Env:PDEVTOOLS")
     if (Test-Path -Path $VSCodeSettingFile)
     {
         $VSCodeSetting_Table = (Get-Content -Path $VSCodeSettingFile | ConvertFrom-Json)
-        if(Get-Member -InputObject $VSCodeSetting_Table -Name "remote.SSH.configFile")
+        if (Get-Member -InputObject $VSCodeSetting_Table -Name "remote.SSH.configFile")
         {
-            if($VSCodeSetting_Table.'remote.SSH.configFile' -ne "$SSH_Config")
+            if ($VSCodeSetting_Table.'remote.SSH.configFile' -ne "$SSH_Config")
             {
                 $Dirty = $true
                 $VSCodeSetting_Table.'remote.SSH.configFile' = "$SSH_Config"
