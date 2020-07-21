@@ -26,4 +26,4 @@ cd /d "%~dp0"
 powershell -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); (linked_pwd jump)"
 
 @REM 
-start "Windows PowerShell" powershell -ExecutionPolicy UnRestricted -NoExit -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); pdev"
+start "Windows PowerShell" powershell.exe -NoLogo -ExecutionPolicy UnRestricted

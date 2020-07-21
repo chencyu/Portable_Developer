@@ -26,6 +26,8 @@ set "LOCALAPPDATA=%USERPROFILE%\AppData\Local"
 @REM set "TEMP=%USERPROFILE%\AppData\Local\Temp"
 @REM set "TMP=%USERPROFILE%\AppData\Local\Temp"
 set "DOCUMENTS=%USERPROFILE%\Documents"
+set "PS_SPACE=%DOCUMENTS%\WindowsPowerShell"
+set "PS_PROFILE=%PS_SPACE%\Profile.ps1"
 
 @REM load check_same.tmp
 @REM if not exist, create it by date and time 
@@ -72,6 +74,12 @@ if not exist "%TEMP%" (
 )
 if not exist "%DOCUMENTS%" (
     mkdir "%DOCUMENTS%"
+)
+if not exist "%PS_SPACE%" (
+	mkdir "%PS_SPACE%"
+)
+if not exist "%PS_PROFILE%" (
+	copy "%PDEVTOOLS%\extra\scripts\Lib\__Profile.ps1" "%PS_PROFILE%" >nul 2>nul
 )
 
 
