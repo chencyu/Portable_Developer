@@ -80,7 +80,7 @@ if not exist "%PDEVWORKSPACE%" (
 )
 
 if not exist "%USERPROFILE%\Desktop" (
-    "%~dp0..\extra\Junction\junction64" -nobanner -accepteula >nul 2>nul "%USERPROFILE%\Desktop" "%PDEVWORKSPACE%"
+    mklink /J "%USERPROFILE%\Desktop" "%PDEVWORKSPACE%" >nul 2>nul
 )
 
 @REM Set Extra PATH
