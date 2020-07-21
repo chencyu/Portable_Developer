@@ -48,8 +48,8 @@ if "%here_check%" == "%linked_check%" (
 
 @REM create new junction to PDev
 
-"%~dp0..\extra\Junction\junction64" -nobanner -accepteula >nul 2>nul -d "%PDEVROOT%"
-"%~dp0..\extra\Junction\junction64" -nobanner -accepteula >nul 2>nul "%PDEVROOT%" "%~dp0..\.."
+rmdir "%PDEVROOT%" >nul 2>nul
+mklink /J "%PDEVROOT%" "%~dp0..\.." >nul 2>nul
 
 @REM attrib /l +h "%PDEVROOT%"
 
