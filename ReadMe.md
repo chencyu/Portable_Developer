@@ -111,6 +111,7 @@ CopyTo.cmd到隨身碟中即可運作，或者存放到硬碟中做為綠色版�
  4. 修復SSH Config所設定的Host無法連線的問題，必須要在VSCode設定中手動指定config路徑，不能用預設的變數($HOME/.ssh)引導
  5. 修復`Launch_VSCode.cmd`啟動VSCode以後不會自己關閉CMD視窗的問題
  6. 發現`mklink /J`不像`mklink /D`那樣需要管理員權限，因此不再用`Junction`而是使用`mklink /J`
+ 7. 用`Profile.ps1`取代`pdev.ps1`的作用
 
 ### _**注意**_
 
