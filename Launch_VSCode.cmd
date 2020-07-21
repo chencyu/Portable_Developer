@@ -14,7 +14,7 @@ for %%i in ("DevelopTools\set_PATH\*.cmd") do (
 
 
 @REM 檔案總管切換到連結後的目錄
-powershell -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); (linked_pwd jump)"
+powershell -NoProfile -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); (linked_pwd jump)"
 
 
 @REM 以繁體中文為預設啟動VSCode
@@ -33,7 +33,7 @@ if not exist "%PDEVTOOLS%\VSCode_Program_File" (
 
 if "%YINSTALL%" == "y" (
 	set YINSTALL=
-	start /wait "Windows PowerShell" powershell -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); pdev; install vscode"
+	start /wait "Windows PowerShell" powershell -NoProfile -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); install vscode"
 	sleep 1 >nul
 	Code.cmd --locale=zh-tw & exit
 ) 
@@ -42,5 +42,5 @@ if "%YINSTALL" == "n" (
 	exit
 )
 
-start "Windows PowerShell" powershell -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); pdev; code.ps1"
+start "Windows PowerShell" powershell -NoProfile -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); code.ps1"
 
