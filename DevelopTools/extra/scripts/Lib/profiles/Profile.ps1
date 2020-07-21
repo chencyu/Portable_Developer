@@ -13,10 +13,6 @@ Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path)
 $obj_path = & linked_pwd retrpath
 if ($null -ne $obj_path) { Set-Location -Path $obj_path }
 
-# Run script when leaving PDEV
-$Host.UI.RawUI.ForegroundColor = "Black"
-$Host.UI.RawUI.BackgroundColor = "Black"
-Register-EngineEvent -SourceIdentifier PowerShell.Exiting -Action { &"$PSCommandRoot/ExitProfile.ps1" }
 
 $Env:PreferPS1 = $false # 根據PowerShell版本決定是否偏好使用PS1腳本而非.exe執行檔
 if (5 -le [Int]$psversiontable.psversion.major) { $Env:PreferPS1 = $true }
