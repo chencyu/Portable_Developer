@@ -36,9 +36,9 @@ if "%dest:~-1%" NEQ "\" (
 @REM /MT:1  使用單執行緒 
 
 if exist "%dest%" (
-	robocopy %COPYROOT_DIR%DevelopTools\Python\Launcher\. %dest%Portable_Developer\DevelopTools\Python\Launcher\
-	copy %COPYROOT_DIR%DevelopTools\Python\Source.url %dest%Portable_Developer\DevelopTools\Python\
-	robocopy %COPYROOT_DIR%. %dest%Portable_Developer\ /E /XO /MT:1 /XD %COPYROOT_DIR%.git\ /XD %COPYROOT_DIR%USER\ /XD %COPYROOT_DIR%WorkSpace\ /XD %COPYROOT_DIR%DevelopTools\mingw64 /XD %COPYROOT_DIR%DevelopTools\Python /XD %COPYROOT_DIR%DevelopTools\VSCode_Program_File /XF *.tmp /XF *.pdevlog
+	robocopy "%COPYROOT_DIR%DevelopTools\Python\Launcher" "%dest%Portable_Developer\DevelopTools\Python\Launcher"
+	copy "%COPYROOT_DIR%DevelopTools\Python\Source.url" "%dest%Portable_Developer\DevelopTools\Python\Source.url"
+	robocopy "%COPYROOT_DIR%." "%dest%Portable_Developer" /E /XO /MT:1 /XD "%COPYROOT_DIR%.git" /XD "%COPYROOT_DIR%PDev" /XD "%COPYROOT_DIR%WorkSpace" /XD "%COPYROOT_DIR%DevelopTools\mingw64" /XD "%COPYROOT_DIR%DevelopTools\Python" /XD "%COPYROOT_DIR%DevelopTools\VSCode_Program_File" /XF *.tmp /XF *.pdevlog
 ) else (
 	@REM 純粹用來顯示找不到該路徑的訊息 
 	@pushd "%dest%" 

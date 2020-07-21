@@ -1,5 +1,6 @@
 ﻿[CmdletBinding()]
-param (
+param
+(
     [Parameter(ParameterSetName = "AddHost")] [switch] $AddHost,
     [Parameter(ParameterSetName = "Update")] [switch] $Update,
     [Parameter(Position = 0, ParameterSetName = "Update")] [string] $ServerName

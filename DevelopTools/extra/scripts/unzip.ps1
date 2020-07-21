@@ -1,17 +1,21 @@
 [CmdletBinding()]
-param (
-    [Parameter(Mandatory, Position=0)]
+param
+(
+    [Parameter(Mandatory, Position = 0)]
     [string]
     $zipfile,
-    [Parameter(Mandatory, Position=1)]
+    [Parameter(Mandatory, Position = 1)]
     [string]
     $outpath
 )
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-try {
+try
+{
     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
-} catch {
+}
+catch
+{
     try
     {
         [System.IO.Compression.ZipArchive]::ExtractToDirectory($zipfile, $outpath)

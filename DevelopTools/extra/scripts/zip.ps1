@@ -1,9 +1,10 @@
 [CmdletBinding()]
-param (
-    [Parameter(Mandatory, Position=0)]
+param
+(
+    [Parameter(Mandatory, Position = 0)]
     [string]
     $src_path,
-    [Parameter(Mandatory, Position=1)]
+    [Parameter(Mandatory, Position = 1)]
     [string]
     $zipfile
 )

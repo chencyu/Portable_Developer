@@ -27,12 +27,20 @@ Set-Alias -Name "make" -Value "mingw32-make"
 $Script:Modules_Path = "$Env:PDEVTOOLS/extra/scripts/PDev_PShell_Modules".Replace("\", "/")
 Import-Module -Name "$($Script:Modules_Path)/UTF8NoBom.psm1" -Global
 
-# 改成我偏好的 Prompt
+#region 改成我偏好的 Prompt
 function global:prompt
 {
-    Write-Host ("PDev " + $(Get-Location) + "`n>") -NoNewLine
+    Write-Host "$(Get-Date -format "(yyyy.MMMM.dd)(tt hh:mm)")" -ForegroundColor Blue -NoNewline
+    Write-Host "[PowerShell]" -ForegroundColor DarkYellow
+    Write-Host "$Env:USERNAME@$Env:COMPUTERNAME" -ForegroundColor Green -NoNewline
+    Write-Host ":[" -NoNewline
+    Write-Host "$(Get-Location)" -ForegroundColor Blue -NoNewline
+    Write-Host "]" -NoNewline
+    Write-Host " $" -NoNewLine
+    Write-Host "`n>>" -NoNewline
     return " "
 }
+#endregoin
 
 # 改成我喜歡的顏色
 $Host.UI.RawUI.ForegroundColor = "Gray"
@@ -41,13 +49,9 @@ Clear-Host
 
 
 # PDev Message
-Write-Output `
-    ">>>>>          Portable Developer          <<<<<"`
-    ">>>>>               ver_1.0                <<<<<"`
-
-# 未來可能作為選項使用
-# Get-Content $env:pdevhome\ReadMe.txt
-
-
-# 切換到連結後的當前目錄，要在最後執行
-# linked_pwd
+$PDevMessage = `
+@(
+    ">>>>>          Portable Developer          <<<<<",
+    ">>>>>               ver_1.0                <<<<<"
+) -join "`n"
+Write-Host $PDevMessage

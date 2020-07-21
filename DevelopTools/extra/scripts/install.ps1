@@ -1,9 +1,10 @@
 ﻿[CmdletBinding()]
-param (
-    [Parameter(Mandatory,Position=0)]
+param
+(
+    [Parameter(Mandatory, Position = 0)]
     [String]
     $update_target,
-    [Parameter(Mandatory=$false,Position=1)]
+    [Parameter(Mandatory = $false, Position = 1)]
     [String]
     $version
 )
@@ -16,9 +17,10 @@ $Script:tmp_update_path = "$Env:TMP/tmp_update_dir"
 # 有些網站想下載，.NET 用的必須要是新版的TLSv1.2
 # 解法來源 https://blog.miniasp.com/post/2019/01/12/PowerShell-Invoke-WebRequest-use-TLS-v12
 $Script:NetSP = ([System.Net.ServicePointManager]::SecurityProtocol | Write-Output)
-if(($NetSP -notlike "*tls12*") -and ($NetSP -notlike "*tls11*")) { [System.Net.ServicePointManager]::SecurityProtocol = "tls12" }
+if (($NetSP -notlike "*tls12*") -and ($NetSP -notlike "*tls11*")) { [System.Net.ServicePointManager]::SecurityProtocol = "tls12" }
 
-function Install_VSCode {
+function Install_VSCode
+{
     $target = "VSCode_Program_File"
     $link = $Script:portable_vscode_link
 
@@ -36,7 +38,7 @@ function Install_VSCode {
         Write-Host "`nCan't download VSCode`n" -ForegroundColor Red
     }
     # Start-Process -FilePath "wget.exe" -ArgumentList "--convert-links","$link","-O","$tmp_update_path/$target_file" -Wait -NoNewWindow
-    Start-Process -FilePath "unzip.exe" -ArgumentList "$tmp_update_path/$target_file","-d","$tmp_update_path/$target" -Wait -NoNewWindow
+    Start-Process -FilePath "unzip.exe" -ArgumentList "$tmp_update_path/$target_file", "-d", "$tmp_update_path/$target" -Wait -NoNewWindow
 
     # 刪除舊版VSCode
     if (Test-Path -Path "$env:PDEVTOOLS/$target")
@@ -53,14 +55,15 @@ function Install_VSCode {
     }
 }
 
-function Install_Python([string]$VER) {
+function Install_Python([string]$VER)
+{
     if ($VER -eq $null)
     {
         Write-Host "`n請指定所要安裝的Python版本`n" -ForegroundColor Red
         return
     }
-    $PYVER_without_DOT = $VER.Replace('.','')
-    $target_dir  = "Python$($PYVER_without_DOT)"
+    $PYVER_without_DOT = $VER.Replace('.', '')
+    $target_dir = "Python$($PYVER_without_DOT)"
     $REAR = 9
 
     # 下載指定版本的最新版 Portable Python
@@ -75,7 +78,7 @@ function Install_Python([string]$VER) {
     {
         $invalid_link = $false
         $target_file = "Portable Python-$($VER).$($REAR)x64.exe"
-        $PYURI = ($PYURL.Replace(":::VER:::","$VER")).Replace(":::REAR:::","$REAR")
+        $PYURI = ($PYURL.Replace(":::VER:::", "$VER")).Replace(":::REAR:::", "$REAR")
         try
         {
             Invoke-WebRequest -Uri $PYURI -OutFile "$tmp_update_path/$target_file" -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
@@ -94,7 +97,7 @@ function Install_Python([string]$VER) {
 
     $SelfExtractDir = "Portable Python-$($VER).$($REAR) x64"
     # 解壓縮，解壓縮出來會是"Portable Python-x.x.x x64"
-    Start-Process -FilePath "$tmp_update_path/$target_file" -ArgumentList "-y","`"-o$tmp_update_path`"" -Wait
+    Start-Process -FilePath "$tmp_update_path/$target_file" -ArgumentList "-y", "`"-o$tmp_update_path`"" -Wait
 
     # 刪除舊版同版本Python
     if (Test-Path -Path "$Env:PYTHONROOT/$target_dir")
@@ -120,7 +123,8 @@ function Install_Python([string]$VER) {
     Write-Output "" "The new Python $($VER) has been installed successfully" ""
 }
 
-function Install_MinGW([string]$API) {
+function Install_MinGW([string]$API)
+{
     if (("$API" -ne "posix") -and ("$API" -ne "win32"))
     {
         Write-Host "`nOnly accept   'posix' / 'win32'  version for MinGW-W64`n" -ForegroundColor Red
@@ -132,7 +136,7 @@ function Install_MinGW([string]$API) {
     Write-Output "" "Downloading   $($API) MinGW-W64......" ""
 
     $target_file = "$($VER)_MinGW_W64.exe"
-    $MINGWURI = $Script:mingw_w64_seh_url.Replace(":::API:::","$API")
+    $MINGWURI = $Script:mingw_w64_seh_url.Replace(":::API:::", "$API")
     try
     {
         Invoke-WebRequest -Uri "$MINGWURI" -OutFile "$tmp_update_path/$target_file" -UserAgent [Microsoft.PowerShell.Commands.PSUserAgent]::Chrome
@@ -173,10 +177,10 @@ switch ($update_target)
     Default
     {
         Write-Output ""`
-        "Not valid update target"`
-        "Valid update target list:"`
-        "                   vscode"`
-        "                   python x.x"`
-        ""
+            "Not valid update target"`
+            "Valid update target list:"`
+            "                   vscode"`
+            "                   python x.x"`
+            ""
     }
 }
