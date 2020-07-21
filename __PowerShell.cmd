@@ -23,7 +23,7 @@ cd /d "%~dp0"
 @REM launch powershell and cd to linked here
 
 @REM Close not linked path explorer, and launch linked path explorer
-powershell -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); (linked_pwd jump)"
+powershell.exe -NoProfile -ExecutionPolicy UnRestricted -c "Set-Item -Path Env:Path -Value ($Env:PDEV_PATH + $Env:Path); (linked_pwd jump)"
 
 @REM 
 start "Windows PowerShell" powershell.exe -NoLogo -ExecutionPolicy UnRestricted
