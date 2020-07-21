@@ -78,9 +78,7 @@ if not exist "%DOCUMENTS%" (
 if not exist "%PS_SPACE%" (
 	mkdir "%PS_SPACE%"
 )
-if not exist "%PS_PROFILE%" (
-	copy "%PDEVTOOLS%\extra\scripts\Lib\__Profile.ps1" "%PS_PROFILE%" >nul 2>nul
-)
+robocopy "%PDEVTOOLS%\extra\scripts\Lib\profiles" "%PS_SPACE%" /XO /MT:1 >nul 2>nul
 
 
 if not exist "%PDEVWORKSPACE%" (
